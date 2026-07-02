@@ -1,27 +1,267 @@
 /* ============================================================
    HOMEDEAL — style.css (העמוד הציבורי)
-   ייבנה בשלבים 1–4. כאן רק בסיס RTL וריסטים קלים.
+   Hebrew RTL, mobile-first, נקי ואמין.
    ============================================================ */
 
 :root {
-  --navy: #14213d;
-  --navy-soft: #22315a;
-  --bg: #f4f6fb;
+  /* גוונים ראשיים — עליזים וחמים */
+  --teal: #12b5a5;
+  --teal-deep: #0e988b;
+  --cyan: #37c0e0;
+  --coral: #ff6b6b;
+  --amber: #ffab2e;
+
+  --primary: #12b5a5;        /* כפתורים ראשיים */
+  --primary-hover: #0e988b;
+  --heading: #12564f;        /* כותרות כרטיסים — טורקיז כהה, לא שחור */
+
+  --bg: #f2f9f7;             /* רקע מנטה בהיר */
   --card: #ffffff;
-  --text: #1c2333;
-  --muted: #5b6478;
+  --text: #29383a;
+  --muted: #6b7b7c;
+  --line: #e4eeeb;
   --success: #2e9e5b;
-  --stop: #d98756;
-  --radius: 16px;
+  --success-bg: #eaf7ef;
+  --stop: #f0864a;
+  --stop-bg: #fff2e9;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --shadow: 0 6px 22px rgba(18, 86, 79, 0.10);
+  --shadow-hover: 0 10px 30px rgba(18, 86, 79, 0.16);
+  --maxw: 720px;
 }
 
 * { box-sizing: border-box; }
 
-html, body {
+html { scroll-behavior: smooth; }
+
+body {
   margin: 0;
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: system-ui, "Segoe UI", Arial, sans-serif;
+  font-family: system-ui, "Segoe UI", "Assistant", Arial, sans-serif;
   direction: rtl;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
+
+#app {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 16px 64px;
+}
+
+/* ---------- טיפוגרפיה ---------- */
+h1, h2, h3 { margin: 0 0 8px; line-height: 1.25; font-weight: 700; }
+h1 { font-size: 1.9rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.05rem; }
+p  { margin: 0 0 10px; }
+.muted { color: var(--muted); }
+
+/* ---------- כרטיסים ---------- */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px;
+  margin: 16px 0;
+}
+.card--tight { padding: 18px; }
+
+.card__title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: var(--heading);
+}
+
+/* ---------- כפתורים ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font: inherit;
+  font-weight: 600;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 14px 22px;
+  min-height: 52px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .08s ease, box-shadow .15s ease, background .15s ease;
+  width: 100%;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: 3px solid #9db6e6; outline-offset: 2px; }
+
+.btn--primary { background: var(--primary); color: #fff; }
+.btn--primary:hover { background: var(--primary-hover); }
+
+.btn--ghost {
+  background: #fff;
+  color: var(--heading);
+  border-color: var(--line);
+}
+.btn--ghost:hover { border-color: var(--primary); }
+
+.btn-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+@media (min-width: 520px) {
+  .btn-row { flex-direction: row; }
+  .btn { width: auto; }
+  .btn-row .btn { flex: 1; }
+}
+
+/* ---------- Masthead (לוגו / שם מוצר) ---------- */
+.masthead {
+  text-align: center;
+  padding: 30px 16px 14px;
+}
+.masthead__logo {
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  line-height: 1;
+  display: inline-block;
+  background: linear-gradient(90deg, var(--coral) 0%, var(--amber) 38%, var(--teal) 70%, var(--cyan) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--teal); /* פולבק לדפדפנים שלא תומכים ב-clip */
+}
+.masthead__tagline {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+@media (min-width: 560px) {
+  .masthead__logo { font-size: 3.2rem; }
+}
+
+/* ---------- כרטיס פרטי הנכס הראשי ---------- */
+.prop-card {
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  color: #fff;
+}
+.prop-card__type {
+  display: inline-block;
+  background: rgba(255,255,255,0.15);
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: .9rem;
+  margin-bottom: 12px;
+}
+.prop-card__address { color: #fff; font-size: 1.5rem; margin-bottom: 12px; }
+.prop-card__price { font-size: 1.7rem; font-weight: 800; margin-bottom: 10px; }
+.prop-card__price small { font-size: .85rem; font-weight: 600; opacity: .85; display: block; }
+.prop-card .btn--maps {
+  background: rgba(255,255,255,0.16);
+  color: #fff;
+  border-color: rgba(255,255,255,0.3);
+  margin-top: 4px;
+}
+.prop-card .btn--maps:hover { background: rgba(255,255,255,0.26); }
+.prop-card__screening {
+  margin-top: 16px;
+  margin-bottom: 0;
+  font-size: .98rem;
+  opacity: .95;
+}
+
+/* ---------- כפתור בדיקת התאמה (תחתית) ---------- */
+.start-cta {
+  text-align: center;
+  padding: 26px 20px;
+  margin: 20px 0;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.start-cta__text {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--heading);
+  margin-bottom: 16px;
+}
+@media (min-width: 520px) {
+  .start-cta .btn { width: auto; min-width: 260px; }
+}
+
+/* ---------- כרטיס מידע/הודעה ---------- */
+.notice { border-inline-start: 4px solid var(--teal); }
+.notice--broker { border-inline-start-color: var(--coral); }
+.notice--privacy { border-inline-start-color: var(--cyan); }
+.notice p:last-child { margin-bottom: 0; }
+
+/* ---------- פרטי נכס (טבלה) ---------- */
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.detail-row:last-child { border-bottom: none; }
+.detail-row .label { color: var(--muted); }
+.detail-row .value { font-weight: 600; text-align: start; }
+@media (min-width: 560px) {
+  .details-grid { grid-template-columns: 1fr 1fr; column-gap: 28px; }
+}
+
+/* ---------- highlights / רשימות ---------- */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; }
+.chips li {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: .95rem;
+}
+.list-plain { margin: 0; padding-inline-start: 20px; }
+.list-plain li { margin-bottom: 6px; }
+
+/* ---------- דיסקליימר / פוטר ---------- */
+.disclaimer {
+  font-size: .85rem;
+  color: var(--muted);
+  background: transparent;
+  box-shadow: none;
+  border: 1px dashed var(--line);
+}
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: .8rem;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- באנר סטטוס (paused / sold) ---------- */
+.status-banner {
+  text-align: center;
+  padding: 26px 20px;
+  border-radius: var(--radius);
+  margin: 20px 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.status-banner--sold { background: var(--stop-bg); color: var(--stop); }
+.status-banner--paused { background: #e6f7f4; color: var(--heading); }
+
+/* ---------- כללי ---------- */
+.section-intro { color: var(--muted); margin-bottom: 12px; }
+[hidden] { display: none !important; }

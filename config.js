@@ -52,7 +52,7 @@ const HOMEDEAL_CONFIG = {
       { label: "מספר חדרים", value: "" },
       { label: "קומות", value: "2" },
       { label: "ממ״ד", value: "כן" },
-      { label: "חניה", value: "" },
+      { label: "חניות", value: "2" },
       { label: "גינה", value: "כן" },
       { label: "מרפסת", value: "" },
       { label: "מחסן", value: "" },
