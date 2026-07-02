@@ -105,7 +105,10 @@
       attrs: { type: "button", "data-cta": "start-quiz" },
       on: { click: function () {
         const q = document.getElementById("questionnaire");
-        if (q) q.scrollIntoView({ behavior: "smooth" });
+        if (q) {
+          q.hidden = false;
+          q.scrollIntoView({ behavior: "smooth" });
+        }
       }}
     }));
     return wrap;
@@ -372,6 +375,163 @@
     return card;
   }
 
+  /* ---------- שאלון + מנוע ניקוד ----------
+     שום תשובה, ציון או פרט אישי אינם נשמרים או נשלחים.
+     הכול חי בזיכרון הדף בלבד. */
+  function renderQuestionnaire() {
+    const questions = (CFG.questionnaire || []).filter(function (q) { return q && q.answers && q.answers.length; });
+    if (!questions.length) return null;
+
+    const card = el("section", { class: "card quiz", attrs: { id: "questionnaire" } });
+    card.hidden = true; // נחשף בלחיצה על "בדיקת התאמה"
+    card.appendChild(el("div", { class: "card__title", text: "שאלון התאמה" }));
+    const body = el("div", { class: "quiz__body" });
+    card.appendChild(body);
+
+    // תשובות שנבחרו: id שאלה → אינדקס תשובה (בזיכרון בלבד)
+    const answers = {};
+
+    function scoringQuestions() {
+      return questions.filter(function (q) { return q.type === "scoring"; });
+    }
+    function allScoringAnswered() {
+      return scoringQuestions().every(function (q) { return answers[q.id] != null; });
+    }
+
+    /* --- מסך השאלון --- */
+    function drawQuiz() {
+      body.innerHTML = "";
+      body.appendChild(el("p", { class: "section-intro",
+        text: "בחר תשובה אחת לכל שאלה. החישוב מתבצע אצלך במכשיר בלבד." }));
+
+      questions.forEach(function (q, qi) {
+        const block = el("div", { class: "q-block", attrs: { "data-qid": q.id } });
+        block.appendChild(el("p", { class: "q-block__text", text: (qi + 1) + ". " + q.text }));
+
+        const group = el("div", { class: "q-answers", attrs: { role: "group" } });
+        q.answers.forEach(function (ans, ai) {
+          const btn = el("button", {
+            class: "answer" + (answers[q.id] === ai ? " answer--selected" : ""),
+            attrs: { type: "button", "aria-pressed": answers[q.id] === ai ? "true" : "false" },
+            on: { click: function () { selectAnswer(q, ai, group); } }
+          });
+          btn.appendChild(el("span", { class: "answer__mark", attrs: { "aria-hidden": "true" }, text: "" }));
+          btn.appendChild(el("span", { class: "answer__text", text: ans.text }));
+          group.appendChild(btn);
+        });
+        block.appendChild(group);
+        body.appendChild(block);
+      });
+
+      const footer = el("div", { class: "quiz__footer" });
+      const hint = el("p", { class: "quiz__hint muted" });
+      const computeBtn = el("button", {
+        class: "btn btn--primary", attrs: { type: "button" },
+        text: "חשב ציון התאמה",
+        on: { click: function () { computeAndShow(); } }
+      });
+      footer.appendChild(hint);
+      footer.appendChild(computeBtn);
+      body.appendChild(footer);
+
+      refreshComputeState(computeBtn, hint);
+      body._computeBtn = computeBtn;
+      body._hint = hint;
+    }
+
+    function selectAnswer(q, ai, group) {
+      // שאלת סף עם "עצור" — עוצרת מיד
+      const ans = q.answers[ai];
+      if (q.type === "threshold" && ans.value === "stop") {
+        drawStop(q.stopMessage);
+        return;
+      }
+      answers[q.id] = ai;
+      // עדכון ויזואלי של הקבוצה
+      Array.prototype.forEach.call(group.children, function (btn, idx) {
+        const sel = idx === ai;
+        btn.classList.toggle("answer--selected", sel);
+        btn.setAttribute("aria-pressed", sel ? "true" : "false");
+      });
+      if (body._computeBtn) refreshComputeState(body._computeBtn, body._hint);
+    }
+
+    function refreshComputeState(btn, hint) {
+      const ready = allScoringAnswered();
+      btn.disabled = !ready;
+      const remaining = scoringQuestions().filter(function (q) { return answers[q.id] == null; }).length;
+      hint.textContent = ready ? "" : ("נותרו " + remaining + " שאלות למענה");
+    }
+
+    /* --- מסך עצירה (שאלת סף) --- */
+    function drawStop(message) {
+      body.innerHTML = "";
+      const stop = el("div", { class: "quiz-result quiz-result--stop" });
+      stop.appendChild(el("div", { class: "quiz-result__icon", attrs: { "aria-hidden": "true" }, text: "⌀" }));
+      stop.appendChild(el("p", { class: "quiz-result__msg" }, multiline(message || "לא ניתן להמשיך בתהליך דרך HOMEDEAL.")));
+      const back = el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "חזרה לראש העמוד",
+        on: { click: function () { window.scrollTo({ top: 0, behavior: "smooth" }); } } });
+      stop.appendChild(back);
+      body.appendChild(stop);
+    }
+
+    /* --- חישוב הציון (מקומי) --- */
+    function computeScore() {
+      const weights = CFG.scoring.weights || {};
+      const byCat = {}; // category → [scores]
+      scoringQuestions().forEach(function (q) {
+        const ai = answers[q.id];
+        if (ai == null) return;
+        const s = q.answers[ai].score;
+        (byCat[q.category] = byCat[q.category] || []).push(typeof s === "number" ? s : 0);
+      });
+      let total = 0;
+      Object.keys(weights).forEach(function (cat) {
+        const arr = byCat[cat];
+        if (!arr || !arr.length) return;
+        const avg = arr.reduce(function (a, b) { return a + b; }, 0) / arr.length;
+        total += avg * weights[cat];
+      });
+      return Math.round(total);
+    }
+
+    function bandFor(score) {
+      const bands = CFG.scoring.scoreBands || [];
+      return bands.find(function (b) { return score >= b.min && score <= b.max; }) || null;
+    }
+
+    /* --- מסך תוצאה --- */
+    function computeAndShow() {
+      if (!allScoringAnswered()) return;
+      const score = computeScore();
+      drawResult(score);
+      card.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function drawResult(score) {
+      body.innerHTML = "";
+      const band = bandFor(score);
+      const res = el("div", { class: "quiz-result" });
+      res.appendChild(el("div", { class: "score-ring" }, [
+        el("span", { class: "score-ring__num", text: String(score) }),
+        el("span", { class: "score-ring__of", text: "מתוך 100" })
+      ]));
+      res.appendChild(el("p", { class: "quiz-result__lead",
+        text: "ציון ההתאמה שלך לעסקה הוא " + score + " מתוך 100." }));
+      if (band && has(band.message)) res.appendChild(el("p", { class: "quiz-result__msg", text: band.message }));
+
+      // פלואו יצירת הקשר (WhatsApp) יתווסף בשלב 4.
+      // בינתיים — אפשרות לענות שוב על השאלון.
+      const retake = el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "ענה שוב על השאלון",
+        on: { click: function () { for (const k in answers) delete answers[k]; drawQuiz(); card.scrollIntoView({ behavior: "smooth" }); } } });
+      res.appendChild(retake);
+      body.appendChild(res);
+    }
+
+    drawQuiz();
+    return card;
+  }
+
   function renderDisclaimer() {
     if (!has(CFG.notices.legalDisclaimer)) return null;
     const card = el("section", { class: "card disclaimer" });
@@ -436,8 +596,7 @@
       renderNoticeCard(CFG.notices.privacyTitle, CFG.notices.privacyText, "notice--privacy"),
       // כפתור בדיקת התאמה — רק במודעה פעילה, אחרי כל תוכן הקריאה
       (status === "active" ? renderStartCta() : null),
-      // שלב 3: שאלון ישולב כאן
-      // שלב 4: פלואו יצירת קשר ישולב כאן
+      (status === "active" ? renderQuestionnaire() : null),
       renderDisclaimer()
     ];
     sections.forEach(function (s) { if (s) app.appendChild(s); });

@@ -400,6 +400,96 @@ p  { margin: 0 0 10px; }
 .lightbox__close:focus-visible,
 .lightbox__nav:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
+/* ---------- שאלון ---------- */
+.q-block { padding: 16px 0; border-bottom: 1px solid var(--line); }
+.q-block:last-of-type { border-bottom: none; }
+.q-block__text { font-weight: 700; color: var(--heading); margin-bottom: 12px; }
+
+.q-answers { display: flex; flex-direction: column; gap: 8px; }
+
+.answer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: start;
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font: inherit;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .12s ease, background .12s ease;
+}
+.answer:hover { border-color: var(--teal); }
+.answer:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.answer__mark {
+  flex: 0 0 auto;
+  width: 22px; height: 22px;
+  border: 2px solid var(--line);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .8rem;
+  color: #fff;
+}
+.answer__text { flex: 1; }
+.answer--selected {
+  border-color: var(--teal);
+  background: #eafaf7;
+}
+.answer--selected .answer__mark {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+.answer--selected .answer__mark::after { content: "✓"; }
+
+.quiz__footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.quiz__hint { text-align: center; margin-bottom: 10px; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- תוצאת שאלון ---------- */
+.quiz-result { text-align: center; padding: 8px 0; }
+.quiz-result__lead { font-size: 1.1rem; font-weight: 700; color: var(--heading); margin-top: 14px; }
+.quiz-result__msg { color: var(--muted); margin-bottom: 18px; }
+.quiz-result .btn { margin-top: 6px; }
+
+.score-ring {
+  width: 150px; height: 150px;
+  margin: 8px auto 4px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--cyan) 100%);
+  box-shadow: var(--shadow);
+}
+.score-ring__num { font-size: 3rem; font-weight: 800; line-height: 1; }
+.score-ring__of { font-size: .85rem; opacity: .9; margin-top: 4px; }
+
+/* מסך עצירה (שאלת סף) — רך, לא מבהיל */
+.quiz-result--stop { }
+.quiz-result__icon {
+  font-size: 2.4rem;
+  color: var(--stop);
+  margin-bottom: 10px;
+}
+.quiz-result--stop .quiz-result__msg {
+  color: var(--text);
+  background: var(--stop-bg);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
 /* ---------- דיסקליימר / פוטר ---------- */
 .disclaimer {
   font-size: .85rem;

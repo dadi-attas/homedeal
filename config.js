@@ -38,7 +38,7 @@ const HOMEDEAL_CONFIG = {
     fullAddress: "[כתובת מלאה]",
     city: "[עיר]",
     neighborhood: "[שכונה]",
-    askingPrice: "0",
+    askingPrice: "3200000",
     askingPriceLabel: "מחיר מבוקש",
     googleMapsUrl: "https://maps.google.com/?q=",
     // כל שדה ריק לא יוצג
@@ -198,9 +198,9 @@ const HOMEDEAL_CONFIG = {
     // סך המשקולות חייב להיות 100
     weights: {
       financialReadiness: 35,
-      purchaseReadiness: 15,
-      timeline: 20,
-      propertyFit: 20,
+      purchaseReadiness: 35,
+      timeline: 5,
+      propertyFit: 15,
       seriousness: 10
     },
     scoreBands: [
@@ -290,12 +290,36 @@ const HOMEDEAL_CONFIG = {
       id: "q7",
       type: "scoring",
       category: "purchaseReadiness",
-      text: "אם הבית יתאים לך לאחר ביקור, עד כמה אתה בשל להתקדם לעסקה?",
+      text: "אם הבית יתאים לך לאחר ביקור, מה הצעד הבא שאתה צפוי לעשות?",
       answers: [
-        { text: "בשל מאוד, אפשר להתקדם בזמן קצר", score: 1.0 },
-        { text: "בשל, אבל אצטרך להשלים בדיקות רגילות", score: 0.75 },
-        { text: "מתעניין ברצינות, אך עדיין בשלב בדיקה והשוואה", score: 0.5 },
-        { text: "כרגע אני בעיקר בודק אפשרויות", score: 0.25 }
+        { text: "להיכנס למשא ומתן ולהתקדם לחוזה רכישה", score: 1.0 },
+        { text: "להתייעץ עם מקבלי ההחלטה ואז להתקדם", score: 0.75 },
+        { text: "להשוות מול עוד נכס או שניים לפני החלטה", score: 0.5 },
+        { text: "להמשיך לחפש ולבחון אפשרויות", score: 0.25 }
+      ]
+    },
+    {
+      id: "q7b",
+      type: "scoring",
+      category: "purchaseReadiness",
+      text: "בכמה נכסים אתה מתעניין ברצינות כרגע במקביל?",
+      answers: [
+        { text: "זה הנכס המרכזי שמעניין אותי כרגע", score: 1.0 },
+        { text: "נכס אחד נוסף שאני שוקל", score: 0.75 },
+        { text: "שניים־שלושה נכסים שאני משווה", score: 0.5 },
+        { text: "סוקר הרבה נכסים, עדיין לא ממוקד", score: 0.25 }
+      ]
+    },
+    {
+      id: "q7c",
+      type: "scoring",
+      category: "purchaseReadiness",
+      text: "היכן אתה עומד בתהליך חיפוש הנכס עד כה?",
+      answers: [
+        { text: "כבר ראיתי נכסים ואני יודע בדיוק מה מתאים לי", score: 1.0 },
+        { text: "ראיתי כמה נכסים ואני מתקרב להחלטה", score: 0.75 },
+        { text: "זה מהנכסים הראשונים שאני בודק", score: 0.5 },
+        { text: "בתחילת הדרך, בעיקר אוסף מידע", score: 0.25 }
       ]
     },
     {
