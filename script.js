@@ -45,6 +45,13 @@
   }
   function has(v) { return v != null && String(v).trim() !== ""; }
 
+  // הודעת "טוסט" קצרה
+  function showToast(msg) {
+    const t = el("div", { class: "toast", attrs: { role: "status", "aria-live": "polite" }, text: msg });
+    document.body.appendChild(t);
+    setTimeout(function () { t.remove(); }, 1900);
+  }
+
   // המרת טקסט רב-שורתי (\n) לפסקאות/שורות בטוחות
   function multiline(text) {
     const frag = document.createDocumentFragment();
@@ -104,6 +111,34 @@
     }
 
     return card;
+  }
+
+  // כפתור "שלח לחבר שאולי מתעניין" — מתחת לכרטיס הנכס
+  function renderShareButton() {
+    const wrap = el("section", { class: "share-bar" });
+    wrap.appendChild(el("span", { class: "share-bar__hint", text: "מכירים מישהו שמחפש בית בגדרה?" }));
+    wrap.appendChild(el("button", {
+      class: "btn btn--share", attrs: { type: "button" },
+      text: "שלח לחבר שאולי מתעניין",
+      on: { click: shareListing }
+    }));
+    return wrap;
+  }
+
+  function shareListing() {
+    const url = window.location.href;
+    const text = (CFG.meta && CFG.meta.shareInviteText) || "ראיתי בית למכירה, אולי יעניין אותך";
+    if (navigator.share) {
+      navigator.share({ title: (CFG.meta && CFG.meta.shareTitle) || "HOMEDEAL", text: text, url: url })
+        .catch(function () { /* המשתמש ביטל — לא עושים כלום */ });
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text + " " + url).then(
+        function () { showToast("הקישור הועתק"); },
+        function () { showToast("ההעתקה נכשלה"); }
+      );
+    } else {
+      showToast("השיתוף אינו נתמך בדפדפן זה");
+    }
   }
 
   // כפתור התחלת השאלון — בתחתית העמוד, אחרי כל תוכן הקריאה
@@ -670,6 +705,9 @@
     // ראש עמוד ממותג + כרטיס פרטי הנכס
     app.appendChild(renderMasthead());
     app.appendChild(renderPropertyCard());
+
+    // כפתור "שלח לחבר" — מתחת לכרטיס הנכס (לא כשהנכס נמכר)
+    if (status !== "sold") app.appendChild(renderShareButton());
 
     // אם נמכר — מציגים באנר בלבד ומדלגים על שאר המידע האינטראקטיבי
     if (status === "sold") {

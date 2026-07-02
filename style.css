@@ -185,6 +185,56 @@ p  { margin: 0 0 10px; }
   opacity: .95;
 }
 
+/* ---------- כפתור שלח לחבר ---------- */
+.share-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 16px 18px;
+  margin: 12px 0 16px;
+}
+.share-bar__hint { color: var(--muted); font-size: .95rem; }
+.btn--share {
+  background: #fff;
+  color: var(--teal-deep);
+  border: 1.5px solid var(--teal);
+  width: auto;
+  min-width: 260px;
+}
+.btn--share:hover { background: #eafaf7; }
+.btn--share::before {
+  content: "";
+  width: 18px; height: 18px;
+  margin-inline-end: 2px;
+  background: no-repeat center / contain
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%230e988b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>');
+  display: inline-block;
+  vertical-align: middle;
+}
+@media (min-width: 520px) {
+  .share-bar { flex-direction: row; justify-content: center; }
+}
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--heading);
+  color: #fff;
+  padding: 11px 20px;
+  border-radius: 999px;
+  box-shadow: var(--shadow-hover);
+  z-index: 1100;
+  font-size: .92rem;
+}
+
 /* ---------- כפתור בדיקת התאמה (תחתית) ---------- */
 .start-cta {
   text-align: center;

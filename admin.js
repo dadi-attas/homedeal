@@ -157,6 +157,8 @@
       b.appendChild(textField("כותרת שיתוף", draft.meta, "shareTitle"));
       b.appendChild(areaField("תיאור שיתוף", draft.meta, "shareDescription", 2));
       b.appendChild(textField("תמונת שיתוף (נתיב)", draft.meta, "shareImage", { placeholder: "images/og-cover.jpg" }));
+      b.appendChild(textField("טקסט 'שלח לחבר'", draft.meta, "shareInviteText"));
+      b.appendChild(el("p", { class: "muted", text: "כותרת/תיאור/תמונת השיתוף לסורקים (WhatsApp/Facebook) נקבעים גם ב-index.html — עדכן שם אם צריך." }));
     }));
 
     // B. בעל הנכס

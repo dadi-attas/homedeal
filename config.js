@@ -16,9 +16,10 @@ const HOMEDEAL_CONFIG = {
     lastUpdated: "2026-07-02",
     language: "he",
     direction: "rtl",
-    shareTitle: "HOMEDEAL — בית למכירה",
+    shareTitle: "HOMEDEAL — למכירה קוטג׳ טורי בגדרה",
     shareDescription: "פרטי הנכס, תמונות, תשריט ושאלון התאמה לפני תיאום ביקור.",
-    shareImage: "images/og-cover.jpg"
+    shareImage: "images/og-cover.jpg",
+    shareInviteText: "ראיתי בית למכירה בגדרה, אולי יעניין אותך"
   },
 
   /* active | paused | sold */
