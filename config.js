@@ -115,7 +115,7 @@ const HOMEDEAL_CONFIG = {
             title: "מטבח",
             description: "תיאור המטבח.",
             images: [
-              { src: "images/kitchen-1.jpg", caption: "מבט כללי על המטבח", alt: "מטבח הבית" }
+              { src: "images/kitchen/kitchen-1.jpg", caption: "מבט כללי על המטבח", alt: "מטבח הבית" }
             ]
           },
           {
@@ -123,7 +123,7 @@ const HOMEDEAL_CONFIG = {
             title: "סלון",
             description: "",
             images: [
-              { src: "images/living-1.jpg", caption: "", alt: "סלון הבית" }
+              { src: "images/living-room/living-1.jpg", caption: "", alt: "סלון הבית" }
             ]
           },
           {
