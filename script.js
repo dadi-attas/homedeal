@@ -57,11 +57,23 @@
 
   /* ---------- סקשנים של העמוד ---------- */
 
+  // אייקון בית צבעוני (SVG מוטמע)
+  var HOUSE_SVG = '<svg viewBox="0 0 48 48" width="28" height="28" role="img" aria-hidden="true">' +
+    '<polygon points="24,5 45,25 3,25" fill="#ff6b6b"/>' +
+    '<rect x="9" y="24" width="30" height="19" rx="2" fill="#ffab2e"/>' +
+    '<rect x="20" y="31" width="8" height="12" rx="1.5" fill="#12b5a5"/>' +
+    '<circle cx="24" cy="16" r="2.6" fill="#fff"/>' +
+    '<rect x="30" y="8" width="4" height="7" rx="1" fill="#37c0e0"/>' +
+    '</svg>';
+
   // ראש עמוד ממותג: HOMEDEAL כלוגו/שם מוצר
   function renderMasthead() {
     const head = el("header", { class: "masthead" });
     head.appendChild(el("div", { class: "masthead__logo", text: CFG.meta.productName }));
-    head.appendChild(el("div", { class: "masthead__tagline", text: CFG.property.title || "בית למכירה" }));
+    const tagline = el("div", { class: "masthead__tagline" });
+    tagline.appendChild(el("span", { text: CFG.property.title || "בית למכירה" }));
+    tagline.appendChild(el("span", { class: "masthead__house", html: HOUSE_SVG }));
+    head.appendChild(tagline);
     return head;
   }
 
@@ -70,7 +82,6 @@
     const p = CFG.property;
     const card = el("section", { class: "card prop-card" });
 
-    if (has(p.propertyType)) card.appendChild(el("span", { class: "prop-card__type", text: p.propertyType }));
     if (has(p.fullAddress)) card.appendChild(el("h1", { class: "prop-card__address", text: p.fullAddress }));
 
     if (has(p.askingPrice) && p.askingPrice !== "0") {
@@ -508,7 +519,8 @@
       card.scrollIntoView({ behavior: "smooth" });
     }
 
-    function drawResult(score) {
+    // כותרת הציון + חלק תחתון משתנה (fn מקבל score ומצייר את ההמשך)
+    function drawResultView(score, lowerFn) {
       body.innerHTML = "";
       const band = bandFor(score);
       const res = el("div", { class: "quiz-result" });
@@ -519,13 +531,101 @@
       res.appendChild(el("p", { class: "quiz-result__lead",
         text: "ציון ההתאמה שלך לעסקה הוא " + score + " מתוך 100." }));
       if (band && has(band.message)) res.appendChild(el("p", { class: "quiz-result__msg", text: band.message }));
-
-      // פלואו יצירת הקשר (WhatsApp) יתווסף בשלב 4.
-      // בינתיים — אפשרות לענות שוב על השאלון.
-      const retake = el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "ענה שוב על השאלון",
-        on: { click: function () { for (const k in answers) delete answers[k]; drawQuiz(); card.scrollIntoView({ behavior: "smooth" }); } } });
-      res.appendChild(retake);
       body.appendChild(res);
+      lowerFn(score);
+    }
+
+    function drawResult(score) {
+      drawResultView(score, drawContactAsk);
+      card.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function retakeBtn() {
+      return el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "ענה שוב על השאלון",
+        on: { click: function () { for (const k in answers) delete answers[k]; drawQuiz(); card.scrollIntoView({ behavior: "smooth" }); } } });
+    }
+    function backToDetailsBtn() {
+      return el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "חזרה לפרטי הנכס",
+        on: { click: function () { window.scrollTo({ top: 0, behavior: "smooth" }); } } });
+    }
+
+    /* --- שאלת יצירת הקשר --- */
+    function drawContactAsk(score) {
+      const ask = el("div", { class: "contact-block" });
+      ask.appendChild(el("p", { class: "contact-block__q", text: "האם תרצה לפנות למוכר ולתאם ביקור?" }));
+      const row = el("div", { class: "btn-row" });
+      row.appendChild(el("button", { class: "btn btn--primary", attrs: { type: "button" },
+        text: "כן, אני רוצה לפנות למוכר",
+        on: { click: function () { drawResultView(score, drawNameInput); } } }));
+      row.appendChild(el("button", { class: "btn btn--ghost", attrs: { type: "button" },
+        text: "לא כרגע",
+        on: { click: function () { drawResultView(score, drawDecline); } } }));
+      ask.appendChild(row);
+      body.appendChild(ask);
+    }
+
+    /* --- "לא כרגע" --- */
+    function drawDecline() {
+      const box = el("div", { class: "contact-block" });
+      box.appendChild(el("p", { class: "contact-block__msg",
+        text: "תודה שקראת את פרטי הנכס. אפשר לחזור לעמוד זה בכל שלב." }));
+      const row = el("div", { class: "btn-row" });
+      row.appendChild(backToDetailsBtn());
+      row.appendChild(retakeBtn());
+      box.appendChild(row);
+      body.appendChild(box);
+    }
+
+    /* --- "כן" — הזנת שם פרטי ואז כפתור WhatsApp --- */
+    function drawNameInput(score) {
+      const box = el("div", { class: "contact-block" });
+      box.appendChild(el("label", { class: "contact-block__q", attrs: { for: "hd-firstname" },
+        text: "נא להזין שם פרטי בלבד לצורך ניסוח הודעת WhatsApp." }));
+
+      const input = el("input", { class: "contact-input", attrs: {
+        id: "hd-firstname", type: "text", autocomplete: "off",
+        inputmode: "text", placeholder: "שם פרטי", maxlength: "40"
+      }});
+      box.appendChild(input);
+
+      box.appendChild(el("p", { class: "contact-note muted",
+        text: "השם אינו נשמר באתר ואינו נשלח אוטומטית. הוא ישולב רק בהודעת WhatsApp שתיפתח אצלך לאישור ושליחה ידנית." }));
+
+      const err = el("p", { class: "contact-err", attrs: { role: "alert" } });
+      err.style.display = "none";
+      box.appendChild(err);
+
+      const waBtn = el("button", { class: "btn btn--wa", attrs: { type: "button" },
+        text: "שלח הודעת WhatsApp למוכר",
+        on: { click: function () {
+          const name = input.value.trim();
+          if (!name) {
+            err.textContent = "נא להזין שם פרטי כדי להמשיך.";
+            err.style.display = "";
+            input.focus();
+            return;
+          }
+          err.style.display = "none";
+          window.open(buildWhatsappUrl(name, score), "_blank", "noopener");
+        }}
+      });
+      box.appendChild(waBtn);
+
+      const row = el("div", { class: "btn-row" });
+      row.appendChild(backToDetailsBtn());
+      row.appendChild(retakeBtn());
+      box.appendChild(row);
+
+      body.appendChild(box);
+      input.focus();
+    }
+
+    function buildWhatsappUrl(name, score) {
+      const tpl = CFG.whatsappMessageTemplate || "";
+      const msg = tpl.replace(/{{\s*firstName\s*}}/g, name)
+                     .replace(/{{\s*score\s*}}/g, String(score));
+      const num = String((CFG.owner && CFG.owner.whatsappNumber) || "").replace(/[^\d]/g, "");
+      return "https://wa.me/" + num + "?text=" + encodeURIComponent(msg);
     }
 
     drawQuiz();
@@ -586,8 +686,8 @@
       // אזהרת מתווכים ראשונה
       renderNoticeCard(CFG.notices.brokerNoticeTitle, CFG.notices.brokerNoticeText, "notice--broker"),
       renderVideo(),
-      renderGallery(),
       renderDescription(),
+      renderGallery(),
       renderDetails(),
       renderItemsCard("includedItems"),
       renderItemsCard("excludedItems"),

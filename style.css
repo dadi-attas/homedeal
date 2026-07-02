@@ -141,6 +141,15 @@ p  { margin: 0 0 10px; }
   color: var(--muted);
   font-size: 1rem;
   letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.masthead__house {
+  display: inline-flex;
+  align-items: center;
+  filter: drop-shadow(0 2px 3px rgba(18,86,79,0.18));
 }
 @media (min-width: 560px) {
   .masthead__logo { font-size: 3.2rem; }
@@ -488,6 +497,58 @@ p  { margin: 0 0 10px; }
   border-radius: var(--radius-sm);
   padding: 16px;
   margin-bottom: 18px;
+}
+
+/* ---------- פלואו יצירת קשר ---------- */
+.contact-block {
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+}
+.contact-block__q {
+  display: block;
+  font-weight: 700;
+  color: var(--heading);
+  margin-bottom: 14px;
+  font-size: 1.05rem;
+}
+.contact-block__msg { color: var(--text); margin-bottom: 16px; }
+
+.contact-input {
+  width: 100%;
+  max-width: 320px;
+  font: inherit;
+  padding: 12px 14px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  margin: 0 auto 10px;
+  display: block;
+}
+.contact-input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(18,181,165,0.18);
+}
+.contact-note { font-size: .82rem; max-width: 420px; margin: 0 auto 14px; }
+.contact-err { color: var(--stop); font-weight: 600; margin-bottom: 10px; }
+
+/* כפתור WhatsApp */
+.btn--wa {
+  background: #25d366;
+  color: #08361a;
+  font-weight: 700;
+  max-width: 360px;
+  margin: 0 auto;
+}
+.btn--wa:hover { background: #1fb958; color: #fff; }
+.btn--wa::before {
+  content: "";
+  width: 20px; height: 20px;
+  background: no-repeat center / contain
+    url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2308361a"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.09c-.24.68-1.42 1.32-1.95 1.36-.5.05-.96.23-3.23-.67-2.72-1.07-4.44-3.86-4.57-4.04-.13-.18-1.09-1.45-1.09-2.76 0-1.31.69-1.96.93-2.22.24-.27.53-.34.71-.34l.51.01c.16.01.38-.06.6.46.24.55.8 1.9.87 2.04.07.14.12.3.02.48-.09.18-.14.29-.27.45-.14.16-.29.36-.41.48-.14.14-.28.29-.12.57.16.27.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.21 1.37.27.14.43.12.59-.07.16-.18.68-.79.86-1.06.18-.27.36-.23.6-.14.24.09 1.55.73 1.81.86.27.14.45.2.51.32.07.11.07.64-.17 1.32z"/></svg>');
+  display: inline-block;
 }
 
 /* ---------- דיסקליימר / פוטר ---------- */

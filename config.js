@@ -28,17 +28,17 @@ const HOMEDEAL_CONFIG = {
   owner: {
     displayName: "בעל הנכס",
     // פורמט בינלאומי ללא + וללא מקפים, לדוגמה: 9725XXXXXXXX
-    whatsappNumber: "9725XXXXXXXX"
+    whatsappNumber: "972523210647"
   },
 
   /* --- הנכס --- */
   property: {
-    title: "בית למכירה",
+    title: "למכירה קוטג׳ טורי בגדרה",
     propertyType: "קוטג׳ טורי",
     fullAddress: "[כתובת מלאה]",
     city: "[עיר]",
     neighborhood: "[שכונה]",
-    askingPrice: "3200000",
+    askingPrice: "3500000",
     askingPriceLabel: "מחיר מבוקש",
     googleMapsUrl: "https://maps.google.com/?q=",
     // כל שדה ריק לא יוצג
