@@ -117,6 +117,187 @@
     return Number(n).toLocaleString("he-IL");
   }
 
+  /* ---------- סרטון סיור (אופציונלי) ---------- */
+  function renderVideo() {
+    const v = CFG.media && CFG.media.introVideo;
+    if (!v || !v.enabled || !has(v.src)) return null; // מוסתר לגמרי אם כבוי/חסר
+    const card = el("section", { class: "card video-card" });
+    if (has(v.title)) card.appendChild(el("div", { class: "card__title", text: v.title }));
+    const video = el("video", {
+      attrs: {
+        controls: "",
+        preload: "metadata",       // חסכוני — לא מוריד את כל הסרטון מראש
+        playsinline: "",
+        "controlsList": "nodownload"
+      }
+    });
+    if (has(v.poster)) video.setAttribute("poster", v.poster);
+    video.appendChild(el("source", { attrs: { src: v.src, type: "video/mp4" } }));
+    video.appendChild(document.createTextNode("הדפדפן אינו תומך בהצגת הסרטון."));
+    card.appendChild(video);
+    return card;
+  }
+
+  /* ---------- גלריית מדיה מובנית ---------- */
+  function renderGallery() {
+    const sections = (CFG.media && CFG.media.sections || []).filter(function (s) {
+      return s && (s.areas && s.areas.length);
+    });
+    if (!sections.length) return null;
+
+    const card = el("section", { class: "card gallery-card" });
+    card.appendChild(el("div", { class: "card__title", text: "סיור בבית" }));
+    const stage = el("div", { class: "gallery" });
+    card.appendChild(stage);
+
+    const state = { sectionId: null, areaId: null };
+    const findSection = function (id) { return sections.find(function (s) { return s.id === id; }); };
+    const findArea = function (sec, id) { return (sec.areas || []).find(function (a) { return a.id === id; }); };
+
+    function backBtn(label, onClick) {
+      return el("button", {
+        class: "back-btn", type: "button",
+        attrs: { type: "button" },
+        text: "→ " + label,
+        on: { click: onClick }
+      });
+    }
+
+    function areaCount(a) {
+      return (a.images || []).length;
+    }
+
+    // רמה 1 — כרטיסי סקשן
+    function drawSections() {
+      const grid = el("div", { class: "sec-grid" });
+      sections.forEach(function (sec) {
+        const btn = el("button", { class: "sec-card", attrs: { type: "button" },
+          on: { click: function () { state.sectionId = sec.id; state.areaId = null; draw(); } } });
+        btn.appendChild(el("h3", { text: sec.title }));
+        if (has(sec.description)) btn.appendChild(el("p", { class: "sec-card__desc", text: sec.description }));
+        const areas = (sec.areas || []).filter(function (a) { return has(a.title); });
+        if (areas.length) {
+          const chips = el("ul", { class: "chips chips--sm" });
+          areas.slice(0, 6).forEach(function (a) { chips.appendChild(el("li", { text: a.title })); });
+          btn.appendChild(chips);
+        }
+        grid.appendChild(btn);
+      });
+      stage.appendChild(grid);
+    }
+
+    // רמה 2 — אזורים בתוך סקשן
+    function drawAreas(sec) {
+      stage.appendChild(backBtn("חזרה לאזורי הבית", function () { state.sectionId = null; state.areaId = null; draw(); }));
+      stage.appendChild(el("h3", { class: "gallery__heading", text: sec.title }));
+      const grid = el("div", { class: "area-grid" });
+      (sec.areas || []).forEach(function (a) {
+        const n = areaCount(a);
+        const btn = el("button", { class: "area-card", attrs: { type: "button" },
+          on: { click: function () { state.areaId = a.id; draw(); } } });
+        btn.appendChild(el("span", { class: "area-card__title", text: a.title }));
+        btn.appendChild(el("span", { class: "area-card__meta",
+          text: n ? (n + " תמונות") : (has(a.description) ? "תיאור" : "בקרוב") }));
+        grid.appendChild(btn);
+      });
+      stage.appendChild(grid);
+    }
+
+    // רמה 3 — תצוגת אזור: תיאור + תמונות
+    function drawArea(sec, area) {
+      stage.appendChild(backBtn("חזרה ל" + sec.title, function () { state.areaId = null; draw(); }));
+      stage.appendChild(el("h3", { class: "gallery__heading", text: area.title }));
+      if (has(area.description)) stage.appendChild(el("p", { class: "gallery__desc", text: area.description }));
+
+      const imgs = (area.images || []).filter(function (im) { return has(im.src); });
+      if (!imgs.length) {
+        stage.appendChild(el("p", { class: "muted", text: "עדיין לא הועלו תמונות לאזור זה." }));
+        return;
+      }
+      const shots = el("div", { class: "shots" });
+      imgs.forEach(function (im, idx) {
+        shots.appendChild(makeShot(im, function () { openLightbox(imgs, idx); }));
+      });
+      stage.appendChild(shots);
+    }
+
+    function makeShot(im, onClick) {
+      const fig = el("figure", { class: "shot", attrs: { role: "button", tabindex: "0" },
+        on: { click: onClick, keydown: function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(); } } } });
+      const img = el("img", { attrs: { src: im.src, alt: im.alt || "", loading: "lazy" } });
+      img.addEventListener("error", function () {
+        fig.classList.add("shot--missing");
+        img.style.display = "none";
+        fig.insertBefore(el("div", { class: "shot__ph", text: im.alt || "תמונה" }), fig.firstChild);
+      });
+      fig.appendChild(img);
+      if (has(im.caption)) fig.appendChild(el("figcaption", { class: "shot__cap", text: im.caption }));
+      return fig;
+    }
+
+    function draw() {
+      stage.innerHTML = "";
+      const sec = state.sectionId ? findSection(state.sectionId) : null;
+      if (!sec) { drawSections(); return; }
+      const area = state.areaId ? findArea(sec, state.areaId) : null;
+      if (!area) { drawAreas(sec); return; }
+      drawArea(sec, area);
+    }
+
+    draw();
+    return card;
+  }
+
+  /* ---------- לייטבוקס ---------- */
+  function openLightbox(images, startIndex) {
+    let i = startIndex;
+    const overlay = el("div", { class: "lightbox", attrs: { role: "dialog", "aria-modal": "true" } });
+
+    const imgEl = el("img", { class: "lightbox__img" });
+    const capEl = el("div", { class: "lightbox__cap" });
+
+    function show() {
+      const im = images[i];
+      imgEl.setAttribute("src", im.src);
+      imgEl.setAttribute("alt", im.alt || "");
+      capEl.textContent = im.caption || "";
+      capEl.style.display = has(im.caption) ? "" : "none";
+    }
+    function close() {
+      document.removeEventListener("keydown", onKey);
+      overlay.remove();
+    }
+    function step(d) { i = (i + d + images.length) % images.length; show(); }
+    function onKey(e) {
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowRight") step(-1); // RTL: ימין = הקודם
+      else if (e.key === "ArrowLeft") step(1);
+    }
+
+    const closeBtn = el("button", { class: "lightbox__close", text: "✕",
+      attrs: { type: "button", "aria-label": "סגירה" }, on: { click: close } });
+
+    const box = el("div", { class: "lightbox__box" });
+    box.appendChild(imgEl);
+    box.appendChild(capEl);
+
+    if (images.length > 1) {
+      box.appendChild(el("button", { class: "lightbox__nav lightbox__nav--prev", text: "‹",
+        attrs: { type: "button", "aria-label": "הבא" }, on: { click: function () { step(1); } } }));
+      box.appendChild(el("button", { class: "lightbox__nav lightbox__nav--next", text: "›",
+        attrs: { type: "button", "aria-label": "הקודם" }, on: { click: function () { step(-1); } } }));
+    }
+
+    overlay.appendChild(closeBtn);
+    overlay.appendChild(box);
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+    document.addEventListener("keydown", onKey);
+
+    show();
+    document.body.appendChild(overlay);
+    closeBtn.focus();
+  }
+
   function renderNoticeCard(title, text, extraClass) {
     if (!has(text)) return null;
     const card = el("section", { class: "card notice " + (extraClass || "") });
@@ -242,14 +423,17 @@
     if (banner) app.appendChild(banner);
 
     const sections = [
-      renderNoticeCard(CFG.notices.privacyTitle, CFG.notices.privacyText, "notice--privacy"),
+      // אזהרת מתווכים ראשונה
       renderNoticeCard(CFG.notices.brokerNoticeTitle, CFG.notices.brokerNoticeText, "notice--broker"),
-      // שלב 2: סרטון + גלריה ישולבו כאן
+      renderVideo(),
+      renderGallery(),
       renderDescription(),
       renderDetails(),
       renderItemsCard("includedItems"),
       renderItemsCard("excludedItems"),
       renderTransactionTerms(),
+      // פרטיות ושקיפות — למטה, ממש לפני כפתור בדיקת ההתאמה
+      renderNoticeCard(CFG.notices.privacyTitle, CFG.notices.privacyText, "notice--privacy"),
       // כפתור בדיקת התאמה — רק במודעה פעילה, אחרי כל תוכן הקריאה
       (status === "active" ? renderStartCta() : null),
       // שלב 3: שאלון ישולב כאן
