@@ -1,0 +1,27 @@
+/* ============================================================
+   HOMEDEAL — style.css (העמוד הציבורי)
+   ייבנה בשלבים 1–4. כאן רק בסיס RTL וריסטים קלים.
+   ============================================================ */
+
+:root {
+  --navy: #14213d;
+  --navy-soft: #22315a;
+  --bg: #f4f6fb;
+  --card: #ffffff;
+  --text: #1c2333;
+  --muted: #5b6478;
+  --success: #2e9e5b;
+  --stop: #d98756;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, "Segoe UI", Arial, sans-serif;
+  direction: rtl;
+}

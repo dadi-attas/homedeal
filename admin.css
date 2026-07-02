@@ -1,0 +1,15 @@
+/* ============================================================
+   HOMEDEAL — admin.css (עמוד העורך)
+   ייבנה בשלב 5.
+   ============================================================ */
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #f4f6fb;
+  color: #1c2333;
+  font-family: system-ui, "Segoe UI", Arial, sans-serif;
+  direction: rtl;
+}
