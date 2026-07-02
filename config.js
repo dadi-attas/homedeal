@@ -35,17 +35,17 @@ const HOMEDEAL_CONFIG = {
   property: {
     title: "למכירה קוטג׳ טורי בגדרה",
     propertyType: "קוטג׳ טורי",
-    fullAddress: "[כתובת מלאה]",
-    city: "[עיר]",
-    neighborhood: "[שכונה]",
+    fullAddress: "רח׳ יסמין 13, גדרה",
+    city: "גדרה",
+    neighborhood: "",
     askingPrice: "3500000",
     askingPriceLabel: "מחיר מבוקש",
-    googleMapsUrl: "https://maps.google.com/?q=",
+    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=%D7%99%D7%A1%D7%9E%D7%99%D7%9F%2013%20%D7%92%D7%93%D7%A8%D7%94",
     // כל שדה ריק לא יוצג
     details: [
       { label: "סוג נכס", value: "קוטג׳ טורי" },
-      { label: "כתובת מלאה", value: "" },
-      { label: "עיר", value: "" },
+      { label: "כתובת מלאה", value: "רח׳ יסמין 13, גדרה" },
+      { label: "עיר", value: "גדרה" },
       { label: "שכונה", value: "" },
       { label: "שטח בנוי", value: "" },
       { label: "שטח מגרש", value: "" },

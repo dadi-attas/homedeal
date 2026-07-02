@@ -1,0 +1,9 @@
+# HOMEDEAL — הגדרות GitHub Pages
+# מחריג את כלי האדמין המקומי (וקבצי עזר) מהאתר הציבורי.
+# הקבצים נשארים ברפו לגיבוי, אך אינם מוגשים באתר ואינם נגישים בכתובת ציבורית.
+exclude:
+  - admin.html
+  - admin.js
+  - admin.css
+  - HOW-TO-UPDATE.txt
+  - README.md

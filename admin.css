@@ -1,15 +1,200 @@
 /* ============================================================
    HOMEDEAL — admin.css (עמוד העורך)
-   ייבנה בשלב 5.
    ============================================================ */
 
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  padding: 0;
-  background: #f4f6fb;
-  color: #1c2333;
-  font-family: system-ui, "Segoe UI", Arial, sans-serif;
-  direction: rtl;
+:root {
+  --teal: #12b5a5;
+  --teal-deep: #0e988b;
+  --cyan: #37c0e0;
+  --coral: #ff6b6b;
+  --amber: #ffab2e;
+  --heading: #12564f;
+  --bg: #f2f9f7;
+  --card: #ffffff;
+  --text: #29383a;
+  --muted: #6b7b7c;
+  --line: #e0eae7;
+  --warn: #e05a2b;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 16px rgba(18, 86, 79, 0.10);
 }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, "Segoe UI", "Assistant", Arial, sans-serif;
+  direction: rtl;
+  line-height: 1.5;
+}
+#admin { max-width: 900px; margin: 0 auto; padding: 16px 16px 80px; }
+
+h1, h2, h3 { color: var(--heading); margin: 0 0 10px; }
+h1 { font-size: 1.6rem; }
+a { color: var(--teal-deep); }
+
+/* ---------- שער כניסה ---------- */
+.gate {
+  max-width: 380px;
+  margin: 80px auto;
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 30px;
+  text-align: center;
+}
+.gate__logo {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  background: linear-gradient(90deg, var(--coral), var(--amber) 40%, var(--teal) 75%, var(--cyan));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  color: var(--teal);
+  margin-bottom: 6px;
+}
+.gate small { color: var(--muted); display: block; margin-bottom: 18px; }
+.gate__err { color: var(--warn); min-height: 20px; font-size: .9rem; margin-top: 8px; }
+
+/* ---------- כללי ---------- */
+.admin-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.admin-head small { color: var(--muted); }
+.hint-banner {
+  background: #fff7ec;
+  border: 1px solid #ffe2b8;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: .88rem;
+  margin: 10px 0 18px;
+  color: #7a5a1e;
+}
+
+/* אקורדיון סקשנים */
+details.sec {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+details.sec > summary {
+  cursor: pointer;
+  padding: 16px 18px;
+  font-weight: 700;
+  color: var(--heading);
+  font-size: 1.05rem;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+details.sec > summary::-webkit-details-marker { display: none; }
+details.sec > summary::after { content: "▾"; color: var(--muted); transition: transform .15s; }
+details.sec[open] > summary::after { transform: rotate(180deg); }
+.sec__body { padding: 0 18px 18px; }
+
+/* שדות */
+.field { margin-bottom: 14px; }
+.field > label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: 5px; color: var(--heading); }
+.field input[type=text],
+.field input[type=number],
+.field textarea,
+.field select {
+  width: 100%;
+  font: inherit;
+  padding: 9px 11px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  color: var(--text);
+}
+.field textarea { resize: vertical; min-height: 64px; }
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none; border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(18,181,165,0.16);
+}
+.field--inline { display: flex; gap: 10px; align-items: center; }
+.field--inline > label { margin: 0; white-space: nowrap; }
+.two-col { display: grid; grid-template-columns: 1fr; gap: 0 14px; }
+@media (min-width: 640px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+/* כרטיסי פריטים (שורות במערך) */
+.row-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 10px;
+  background: #fbfefd;
+}
+.row-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.row-card__title { font-weight: 700; color: var(--heading); font-size: .95rem; }
+
+/* כפתורים */
+.btn {
+  font: inherit; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  padding: 9px 16px; background: var(--teal); color: #fff;
+  transition: background .15s, transform .08s;
+}
+.btn:hover { background: var(--teal-deep); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn--ghost { background: #fff; color: var(--teal-deep); border-color: var(--line); }
+.btn--ghost:hover { background: #f0faf8; }
+.btn--danger { background: #fff; color: var(--coral); border-color: #f6d2d2; }
+.btn--danger:hover { background: #fff2f2; }
+.btn--sm { padding: 5px 10px; font-size: .82rem; }
+.btn-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.icon-btn {
+  font: inherit; cursor: pointer; background: #fff; color: var(--muted);
+  border: 1px solid var(--line); border-radius: 8px; width: 30px; height: 30px;
+  line-height: 1; padding: 0;
+}
+.icon-btn:hover { border-color: var(--teal); color: var(--teal-deep); }
+
+.add-row { margin-top: 6px; }
+.subtree { border-inline-start: 3px solid var(--line); padding-inline-start: 12px; margin: 8px 0 8px 0; }
+
+/* משקולות */
+.weights-total { font-weight: 700; margin: 8px 0; }
+.weights-total--bad { color: var(--warn); }
+.weights-total--ok { color: var(--teal-deep); }
+
+/* פלט / תצוגה מקדימה */
+.output textarea {
+  width: 100%; min-height: 220px; font-family: ui-monospace, "Consolas", monospace;
+  font-size: .8rem; direction: ltr; text-align: left;
+  border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: 10px;
+}
+.preview-box {
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  padding: 14px; font-size: .9rem;
+}
+.preview-box .wa-preview {
+  white-space: pre-wrap; background: #eafaf0; border-radius: 8px; padding: 10px; margin-top: 8px;
+}
+.toast {
+  position: fixed; bottom: 20px; inset-inline-start: 50%; transform: translateX(50%);
+  background: var(--heading); color: #fff; padding: 10px 18px; border-radius: 999px;
+  box-shadow: var(--shadow); z-index: 100; font-size: .9rem;
+}
+.sticky-actions {
+  position: sticky; bottom: 0; background: var(--bg);
+  padding: 12px 0; margin-top: 10px; border-top: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.muted { color: var(--muted); }
