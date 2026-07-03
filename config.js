@@ -238,29 +238,51 @@ const HOMEDEAL_CONFIG = {
             ]
           },
           {
-            "id": "bedrooms",
-            "title": "חדרי שינה",
+            "id": "kids-room-1",
+            "title": "חדר ילדים 1",
             "description": "",
             "images": [
               {
                 "src": "images/bedrooms/bedroom-1.jpg",
                 "caption": "",
-                "alt": "חדר שינה 1"
+                "alt": "חדר ילדים 1 1"
               },
               {
                 "src": "images/bedrooms/bedroom-2.jpg",
                 "caption": "",
-                "alt": "חדר שינה 2"
+                "alt": "חדר ילדים 1 2"
               },
+              {
+                "src": "images/bedrooms/bedroom-5.jpg",
+                "caption": "",
+                "alt": "חדר ילדים 1 3"
+              }
+            ]
+          },
+          {
+            "id": "kids-room-2",
+            "title": "חדר ילדים 2",
+            "description": "",
+            "images": [
               {
                 "src": "images/bedrooms/bedroom-3.jpg",
                 "caption": "",
-                "alt": "חדר שינה 3"
+                "alt": "חדר ילדים 2 1"
               },
               {
                 "src": "images/bedrooms/bedroom-4.jpg",
                 "caption": "",
-                "alt": "חדר שינה 4"
+                "alt": "חדר ילדים 2 2"
+              },
+              {
+                "src": "images/bedrooms/bedroom-6.jpg",
+                "caption": "",
+                "alt": "חדר ילדים 2 3"
+              },
+              {
+                "src": "images/bedrooms/bedroom-7.jpg",
+                "caption": "",
+                "alt": "חדר ילדים 2 4"
               }
             ]
           },
