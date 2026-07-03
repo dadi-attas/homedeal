@@ -180,7 +180,8 @@
     // D. פרטי נכס
     root.appendChild(section("פרטי הנכס", function (b) {
       var g = el("div", { class: "two-col" });
-      g.appendChild(textField("שם משנה (מתחת ללוגו)", draft.property, "title"));
+      g.appendChild(textField("סלוגן (מתחת ללוגו)", draft.meta, "slogan"));
+      g.appendChild(textField("שורת כותרת בכרטיס (מעל הכתובת)", draft.property, "title"));
       g.appendChild(textField("סוג נכס", draft.property, "propertyType"));
       g.appendChild(textField("כתובת מלאה", draft.property, "fullAddress"));
       g.appendChild(textField("עיר", draft.property, "city"));

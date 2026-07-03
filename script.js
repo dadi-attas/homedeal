@@ -78,7 +78,7 @@
     const head = el("header", { class: "masthead" });
     head.appendChild(el("div", { class: "masthead__logo", text: CFG.meta.productName }));
     const tagline = el("div", { class: "masthead__tagline" });
-    tagline.appendChild(el("span", { text: CFG.property.title || "בית למכירה" }));
+    tagline.appendChild(el("span", { text: (CFG.meta && CFG.meta.slogan) || "מתאימים בתים לאנשים" }));
     tagline.appendChild(el("span", { class: "masthead__house", html: HOUSE_SVG }));
     head.appendChild(tagline);
     return head;
@@ -89,6 +89,7 @@
     const p = CFG.property;
     const card = el("section", { class: "card prop-card" });
 
+    if (has(p.title)) card.appendChild(el("div", { class: "prop-card__lead", text: p.title }));
     if (has(p.fullAddress)) card.appendChild(el("h1", { class: "prop-card__address", text: p.fullAddress }));
 
     if (has(p.askingPrice) && p.askingPrice !== "0") {
@@ -128,17 +129,10 @@
   function shareListing() {
     const url = window.location.href;
     const text = (CFG.meta && CFG.meta.shareInviteText) || "ראיתי בית למכירה, אולי יעניין אותך";
-    if (navigator.share) {
-      navigator.share({ title: (CFG.meta && CFG.meta.shareTitle) || "HOMEDEAL", text: text, url: url })
-        .catch(function () { /* המשתמש ביטל — לא עושים כלום */ });
-    } else if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text + " " + url).then(
-        function () { showToast("הקישור הועתק"); },
-        function () { showToast("ההעתקה נכשלה"); }
-      );
-    } else {
-      showToast("השיתוף אינו נתמך בדפדפן זה");
-    }
+    // פתיחת WhatsApp לבחירת איש קשר, עם ההזמנה + קישור למודעה.
+    // עובד בנייד (אפליקציה) ובמחשב (WhatsApp Web).
+    const wa = "https://wa.me/?text=" + encodeURIComponent(text + "\n" + url);
+    window.open(wa, "_blank", "noopener");
   }
 
   // כפתור התחלת השאלון — בתחתית העמוד, אחרי כל תוכן הקריאה
