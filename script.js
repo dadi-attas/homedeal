@@ -307,28 +307,34 @@
       capEl.textContent = im.caption || "";
       capEl.style.display = has(im.caption) ? "" : "none";
     }
-    function close() {
+    // teardown = הסגירה בפועל (נקראת מ-popstate כשחוזרים בהיסטוריה)
+    function teardown() {
       document.removeEventListener("keydown", onKey);
       overlay.remove();
       activeLightboxClose = null;
     }
-    activeLightboxClose = close;
+    // בקשת סגירה מה-UI: חוזרים בהיסטוריה → popstate יבצע teardown (סימטרי לפתיחה)
+    function requestClose() {
+      if (activeLightboxClose && typeof history !== "undefined" && history.back) history.back();
+      else teardown();
+    }
+    activeLightboxClose = teardown;
     function step(d) { i = (i + d + images.length) % images.length; show(); }
     function onKey(e) {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") requestClose();
       else if (e.key === "ArrowRight") step(-1); // RTL: ימין = הקודם
       else if (e.key === "ArrowLeft") step(1);
     }
 
     const closeBtn = el("button", { class: "lightbox__close", text: "✕",
-      attrs: { type: "button", "aria-label": "סגירה" }, on: { click: close } });
+      attrs: { type: "button", "aria-label": "סגירה" }, on: { click: requestClose } });
 
     const box = el("div", { class: "lightbox__box" });
     box.appendChild(imgEl);
     box.appendChild(capEl);
     // קישור "חזור לסיור" מתחת לתמונה — אינטואיטיבי בנוסף לכפתור החזרה של הטלפון
     box.appendChild(el("button", { class: "lightbox__back", attrs: { type: "button" },
-      text: "↩ חזור לסיור", on: { click: close } }));
+      text: "↩ חזור לסיור", on: { click: requestClose } }));
 
     if (images.length > 1) {
       box.appendChild(el("button", { class: "lightbox__nav lightbox__nav--prev", text: "‹",
@@ -339,8 +345,11 @@
 
     overlay.appendChild(closeBtn);
     overlay.appendChild(box);
-    overlay.addEventListener("click", function (e) { if (e.target === overlay) close(); });
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) requestClose(); });
     document.addEventListener("keydown", onKey);
+
+    // רשומת היסטוריה ייעודית ללייטבוקס — חזרה אחת (או כפתור המכשיר) סוגרת אותו בלבד
+    if (typeof history !== "undefined" && history.pushState) history.pushState({ hd: "lightbox" }, "");
 
     show();
     document.body.appendChild(overlay);
@@ -352,11 +361,14 @@
      - בשורש → החזרה שואלת "לצאת?" עם כן/לא */
   function initBackButtonManager() {
     if (typeof history === "undefined" || !history.pushState) return;
+    // מונע קפיצות גלילה אוטומטיות של הדפדפן במעבר בהיסטוריה
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     let confirmOpen = false;
     function arm() { history.pushState({ hd: "guard" }, ""); }
 
     function onPop() {
-      if (activeLightboxClose) { activeLightboxClose(); arm(); return; }
+      // לייטבוקס פתוח → סגור אותו בלבד. אין re-arm: ללייטבוקס יש רשומת היסטוריה משלו, וה-guard נשאר.
+      if (activeLightboxClose) { activeLightboxClose(); return; }
       if (confirmOpen) { arm(); return; }
       arm();
       showExitConfirm();
