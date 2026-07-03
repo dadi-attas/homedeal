@@ -21,6 +21,7 @@
 
   const CFG = HOMEDEAL_CONFIG;
   const app = document.getElementById("app");
+  let activeLightboxClose = null; // פונקציית סגירה של הלייטבוקס הפתוח (אם יש)
 
   /* ---------- עזרי DOM ---------- */
 
@@ -309,7 +310,9 @@
     function close() {
       document.removeEventListener("keydown", onKey);
       overlay.remove();
+      activeLightboxClose = null;
     }
+    activeLightboxClose = close;
     function step(d) { i = (i + d + images.length) % images.length; show(); }
     function onKey(e) {
       if (e.key === "Escape") close();
@@ -323,6 +326,9 @@
     const box = el("div", { class: "lightbox__box" });
     box.appendChild(imgEl);
     box.appendChild(capEl);
+    // קישור "חזור לסיור" מתחת לתמונה — אינטואיטיבי בנוסף לכפתור החזרה של הטלפון
+    box.appendChild(el("button", { class: "lightbox__back", attrs: { type: "button" },
+      text: "↩ חזור לסיור", on: { click: close } }));
 
     if (images.length > 1) {
       box.appendChild(el("button", { class: "lightbox__nav lightbox__nav--prev", text: "‹",
@@ -339,6 +345,49 @@
     show();
     document.body.appendChild(overlay);
     closeBtn.focus();
+  }
+
+  /* ---------- ניהול כפתור החזרה של המכשיר ----------
+     - לייטבוקס פתוח → החזרה סוגרת אותו (לא יוצאת מהאתר)
+     - בשורש → החזרה שואלת "לצאת?" עם כן/לא */
+  function initBackButtonManager() {
+    if (typeof history === "undefined" || !history.pushState) return;
+    let confirmOpen = false;
+    function arm() { history.pushState({ hd: "guard" }, ""); }
+
+    function onPop() {
+      if (activeLightboxClose) { activeLightboxClose(); arm(); return; }
+      if (confirmOpen) { arm(); return; }
+      arm();
+      showExitConfirm();
+    }
+
+    function showExitConfirm() {
+      if (confirmOpen) return;
+      confirmOpen = true;
+      const overlay = el("div", { class: "exit-confirm", attrs: { role: "dialog", "aria-modal": "true" } });
+      const boxEl = el("div", { class: "exit-confirm__box" });
+      boxEl.appendChild(el("p", { class: "exit-confirm__msg", text: "האם אתה רוצה לצאת מהעמוד?" }));
+      const row = el("div", { class: "btn-row" });
+      row.appendChild(el("button", { class: "btn btn--primary", attrs: { type: "button" }, text: "כן, צא",
+        on: { click: leave } }));
+      row.appendChild(el("button", { class: "btn btn--ghost", attrs: { type: "button" }, text: "לא, הישאר",
+        on: { click: stay } }));
+      boxEl.appendChild(row);
+      overlay.appendChild(boxEl);
+      overlay.addEventListener("click", function (e) { if (e.target === overlay) stay(); });
+      document.body.appendChild(overlay);
+
+      function stay() { confirmOpen = false; overlay.remove(); }
+      function leave() {
+        confirmOpen = false; overlay.remove();
+        window.removeEventListener("popstate", onPop);
+        history.go(-2); // מדלג על ה-guard ועל הכניסה הראשונית → חזרה לעמוד הקודם
+      }
+    }
+
+    arm();
+    window.addEventListener("popstate", onPop);
   }
 
   function renderNoticeCard(title, text, extraClass) {
@@ -738,4 +787,5 @@
 
   document.title = (CFG.meta.shareTitle || "HOMEDEAL");
   render();
+  initBackButtonManager();
 })();
