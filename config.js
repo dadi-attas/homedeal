@@ -45,7 +45,7 @@ const HOMEDEAL_CONFIG = {
       },
       {
         "label": "שטח בנוי",
-        "value": ""
+        "value": "130"
       },
       {
         "label": "שטח מגרש",
@@ -69,7 +69,7 @@ const HOMEDEAL_CONFIG = {
       },
       {
         "label": "גינה",
-        "value": "כן"
+        "value": "כן כ 40 מ\"ר"
       },
       {
         "label": "מרפסת",
