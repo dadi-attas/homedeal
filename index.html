@@ -27,7 +27,10 @@
   <!-- העמוד הציבורי ייבנה בשלבים 1–4 -->
   <main id="app"></main>
 
-  <script src="config.js"></script>
+  <!-- עוקף מטמון: טוען config.js טרי בכל כניסה כדי שעדכוני תוכן יופיעו מיד (בלי להמתין ל-cache) -->
+  <script>
+    document.write('<scr' + 'ipt src="config.js?v=' + Date.now() + '"><\/scr' + 'ipt>');
+  </script>
   <script src="script.js"></script>
 </body>
 </html>
