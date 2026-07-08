@@ -2,7 +2,7 @@
 const HOMEDEAL_CONFIG = {
   "meta": {
     "productName": "HOMEDEAL",
-    "configVersion": "2026-07-08-1",
+    "configVersion": "2026-07-08-2",
     "lastUpdated": "2026-07-08",
     "language": "he",
     "direction": "rtl",
@@ -23,7 +23,7 @@ const HOMEDEAL_CONFIG = {
     "fullAddress": "רח׳ יסמין 13, גדרה",
     "city": "גדרה",
     "neighborhood": "",
-    "askingPrice": "3430000",
+    "askingPrice": "3480000",
     "askingPriceLabel": "מחיר מבוקש",
     "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=%D7%99%D7%A1%D7%9E%D7%99%D7%9F%2013%20%D7%92%D7%93%D7%A8%D7%94",
     "details": [
