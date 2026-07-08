@@ -190,7 +190,7 @@
     if (!sections.length) return null;
 
     const card = el("section", { class: "card gallery-card" });
-    card.appendChild(el("div", { class: "card__title", text: "סיור בבית" }));
+    card.appendChild(el("div", { class: "card__title", text: "סיור בבית - גלריית תמונות 📷" }));
     const stage = el("div", { class: "gallery" });
     card.appendChild(stage);
 
